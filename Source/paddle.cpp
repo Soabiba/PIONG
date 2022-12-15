@@ -17,3 +17,4 @@ public:
         DrawRectangleRec(GetRectangle(), RAYWHITE);
     }
 };
+Paddle paddle;
