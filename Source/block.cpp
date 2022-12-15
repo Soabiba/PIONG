@@ -23,3 +23,4 @@ public:
         DrawRectangleRec(GetRectangle(), Light_Green);
     }
 };
+Block block;
