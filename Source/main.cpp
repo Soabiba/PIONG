@@ -15,21 +15,18 @@ int main(void)
     int score = 0;
     int lives = 3;
 
-    Ball ball;
     ball.x      = screenWidth / 2;
     ball.y      = screenHeight / 2;
     ball.radius = 10;
     ball.speedx = 300;
     ball.speedy = 300;
 
-    Paddle paddle;
     paddle.x      = screenWidth / 2;
     paddle.y      = screenHeight - 20;
     paddle.width  = 150;
     paddle.height = 15;
     paddle.speed  = 500;
 
-    Block block;
     block.x           = 10;
     block.y           = 40;
     block.width       = 100;
