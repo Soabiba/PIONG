@@ -5,46 +5,106 @@
 
 typedef enum GameScreen { TITLE, GAMEPLAY, ENDING } GameScreen;
 
+class GameState
+{
+public:
+    GameState() = default;
+
+    // prevent copy construction, use .reset() instead
+    GameState(const GameState&) = delete;
+    GameState& operator=(const GameState&) = delete;
+
+    GameState(int screenWidth, int screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight)
+    {
+        reset();
+    }
+
+    void reset()
+    {
+        maxRows = 8;
+        maxColumns = 16;
+
+        ball.x = screenWidth / 2;
+        ball.y = screenHeight / 2;
+        ball.radius = 10;
+        ball.speedx = 300;
+        ball.speedy = 300;
+
+        paddle.x = screenWidth / 2;
+        paddle.y = screenHeight - 20;
+        paddle.width = 150;
+        paddle.height = 15;
+        paddle.speed = 500;
+
+        Vector2 blockPositions[] =
+        {
+            { 1, 1 },
+            { 1, 2 },
+            { 1, 3 },
+            { 2, 4 },
+        };
+
+        if (blocks)
+        {
+            delete[] blocks;
+        }
+
+        blockCount = sizeof(blockPositions) / sizeof(*blockPositions);
+        blocks = new Block[blockCount];
+        for (int i = 0; i < blockCount; i++)
+        {
+            blocks[i] = Block(blockPositions[i].x, blockPositions[i].y, maxRows, maxColumns, screenWidth, screenHeight);
+        }
+    }
+
+    ~GameState()
+    {
+        if (blocks)
+        {
+            delete[] blocks;
+        }
+    }
+
+    int maxRows{};
+    int maxColumns{};
+    int screenWidth, screenHeight;
+    Ball ball{};
+    Paddle paddle{};
+    Block* blocks{};
+    int blockCount{};
+};
+
 int main(void)
 {
-    const int screenWidth  = 800;
+    const int screenWidth = 800;
     const int screenHeight = 450;
-    const char* losertext  = nullptr;
-    const char* restart    = nullptr;
+
+    GameState state{ screenWidth, screenHeight };
+    const char* losertext = nullptr;
+    const char* restart = nullptr;
 
     int score = 0;
     int lives = 3;
 
-    ball.x      = screenWidth / 2;
-    ball.y      = screenHeight / 2;
-    ball.radius = 10;
-    ball.speedx = 300;
-    ball.speedy = 300;
-
-    paddle.x      = screenWidth / 2;
-    paddle.y      = screenHeight - 20;
-    paddle.width  = 150;
-    paddle.height = 15;
-    paddle.speed  = 500;
-
-    block.x           = 10;
-    block.y           = 40;
-    block.width       = 100;
-    block.height      = 30;
-    block.rowIndex    = 5;
-    block.columnIndex = 5;
-    block.isAlive = true;
+    Rectangle screenbg = { 0, 0, screenWidth, screenHeight };
 
     InitWindow(screenWidth, screenHeight, "Piong");
+    InitAudioDevice();
+
     SetWindowState(FLAG_VSYNC_HINT);
     SetTargetFPS(60);
 
-    GameScreen screen = TITLE;      
-    int framesCounter = 0;          
-    int gameResult = -1;            
-    bool gamePaused = false;       
+    Texture2D player;
+    player = LoadTexture("D:\\assignment\\Source\\Resources\\player.jpg");
+    Sound sound;
+    sound = LoadSound("D:\\assignment\\Source\\Resources\\sound.wav");
 
-    while (!WindowShouldClose() )
+    GameScreen screen = TITLE;
+    int framesCounter = 0;
+    int gameResult = -1;
+    bool gamePaused = false;
+
+    while (!WindowShouldClose())
     {
         switch (screen)
         {
@@ -54,6 +114,7 @@ int main(void)
 
             if (IsKeyPressed(KEY_SPACE))
             {
+                state.reset();
                 screen = GAMEPLAY;
             }
 
@@ -61,6 +122,10 @@ int main(void)
 
         case GAMEPLAY:
         {
+            Ball& ball = state.ball;
+            Paddle& paddle = state.paddle;
+            Block*& blocks = state.blocks;
+
             if (!gamePaused)
             {
                 // Update
@@ -108,31 +173,47 @@ int main(void)
                 if (CheckCollisionCircleRec(Vector2{ ball.x, ball.y }, ball.radius,
                     paddle.GetRectangle()))
                 {
+                    PlaySoundMulti(sound);
                     ball.speedy *= -1;
                 }
 
-                if (CheckCollisionCircleRec(Vector2{ ball.x, ball.y }, ball.radius,
-                    block.GetRectangle()))
+                bool shouldGameContinue = false;
+                for (int i = 0; i < state.blockCount; i++)
                 {
-                    block.isAlive = false;
-                    ball.speedy *= -1;
-                }
-
-                
-            }
-            if (ball.y >= screenHeight)
-                {
-                    ball.ResetBall();
-                    lives--;
-
-                    if (lives <= 0)
+                    auto& block = state.blocks[i];
+                    if (block.isAlive)
                     {
-                        lives = 3;
-                        losertext = "YOU LOSE!!!";
-                        restart = "PRESS SPACE TO PLAY AGAIN";
-                        screen = ENDING;
+                        if (CheckCollisionCircleRec(Vector2{ ball.x, ball.y }, ball.radius,
+                            block.GetRectangle()))
+                        {
+                            block.isAlive = false;
+                            ball.speedy *= -1;
+                        }
+                        shouldGameContinue = true;
                     }
                 }
+
+                if (!shouldGameContinue)
+                {
+                    lives = 3;
+                    losertext = "YOU WIN!!!";
+                    restart = "PRESS SPACE TO PLAY AGAIN";
+                    screen = ENDING;
+                }
+            }
+            if (ball.y >= screenHeight)
+            {
+                ball.ResetBall();
+                lives--;
+
+                if (lives <= 0)
+                {
+                    lives = 3;
+                    losertext = "YOU LOSE!!!";
+                    restart = "PRESS SPACE TO PLAY AGAIN";
+                    screen = ENDING;
+                }
+            }
 
         } break;
 
@@ -147,7 +228,6 @@ int main(void)
                 {
                     losertext = nullptr;
                     restart = nullptr;
-                    ball.ResetBall();
                 }
                 screen = TITLE;
             }
@@ -164,7 +244,7 @@ int main(void)
 
         ClearBackground(BLACK);
         DrawFPS(10, 10);
-        
+
         switch (screen)
         {
         case TITLE:
@@ -179,16 +259,26 @@ int main(void)
 
         case GAMEPLAY:
         {
+            Ball& ball = state.ball;
+            Paddle& paddle = state.paddle;
+
+            DrawTexturePro(player, screenbg, screenbg, Vector2{ 0, 0 }, 0, RAYWHITE);
+
             ball.Draw();
-        
+
             paddle.Draw();
 
-            if(block.isAlive == true)
-            { 
-            block.Draw();
+
+            for (int i = 0; i < state.blockCount; i++)
+            {
+                auto& block = state.blocks[i];
+                if (block.isAlive)
+                {
+                    block.Draw();
+                }
             }
 
-            DrawText( TextFormat("Lives =""% i", lives), 150, 10, 20, RAYWHITE);
+            DrawText(TextFormat("Lives =""% i", lives), 150, 10, 20, RAYWHITE);
             DrawText(TextFormat("Score =""% i", score), screenWidth - 150, 10, 20, RAYWHITE);
         } break;
 
@@ -196,10 +286,10 @@ int main(void)
         {
             if (losertext)
             {
-            int textwidth  = MeasureText(losertext, 60);
-            int rtextwidth = MeasureText(restart, 30);
-            DrawText(losertext, screenWidth/2 - textwidth/2, screenHeight / 2 - 30, 60, RED);
-            DrawText(restart, screenWidth / 2  - rtextwidth / 2, screenHeight / 2 +35, 30, YELLOW);
+                int textwidth = MeasureText(losertext, 60);
+                int rtextwidth = MeasureText(restart, 30);
+                DrawText(losertext, screenWidth / 2 - textwidth / 2, screenHeight / 2 - 30, 60, RED);
+                DrawText(restart, screenWidth / 2 - rtextwidth / 2, screenHeight / 2 + 35, 30, YELLOW);
             }
         } break;
 
@@ -209,8 +299,12 @@ int main(void)
         //----------------------------------------------------------------------------------
     }
 
+    UnloadTexture(player);
+    UnloadSound(sound);
+
     // De-Initialization
     //--------------------------------------------------------------------------------------
+    CloseAudioDevice();
     CloseWindow();
     //--------------------------------------------------------------------------------------
 

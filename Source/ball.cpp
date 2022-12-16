@@ -22,4 +22,3 @@ public:
         speedy *= speed_choices[GetRandomValue(0, 1)];
     }
 };
-Ball ball;
