@@ -3,7 +3,6 @@
 #include "paddle.cpp"
 #include "block.cpp"
 #include "gamestate.cpp"
-#include "block.h"
 
 typedef enum GameScreen { TITLE, GAMEPLAY, ENDING } GameScreen;
 
@@ -26,11 +25,13 @@ int main(void)
 
     SetWindowState(FLAG_VSYNC_HINT);
     SetTargetFPS(60);
+    // C:\Users\frostfox\wkspaces\PIONG\assignment\Source\Resources
 
     Texture2D player;
-    player = LoadTexture("C:\\Users\\student-2712\\Downloads\\assignment\\Source\\Resources\\player.png");
+    player = LoadTexture("./Source/Resources/player.png");
+    
     Sound sound;
-    sound = LoadSound("C:\\Users\\student-2712\\Downloads\\assignment\\Source\\Resources\\sound.wav");
+    sound = LoadSound("./Source/Resources/sound.wav");
 
     
     int framesCounter = 0;

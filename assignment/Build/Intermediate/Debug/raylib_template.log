@@ -1,0 +1,11 @@
+﻿  main.cpp
+C:\Users\frostfox\wkspaces\PIONG\assignment\Source\ball.cpp(17,30): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\frostfox\wkspaces\PIONG\assignment\Source\ball.cpp(18,31): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\frostfox\wkspaces\PIONG\assignment\Source\gamestate.cpp(23,30): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\frostfox\wkspaces\PIONG\assignment\Source\gamestate.cpp(24,31): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\frostfox\wkspaces\PIONG\assignment\Source\gamestate.cpp(29,32): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\frostfox\wkspaces\PIONG\assignment\Source\gamestate.cpp(30,33): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\frostfox\wkspaces\PIONG\assignment\Source\gamestate.cpp(45,69): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\frostfox\wkspaces\PIONG\assignment\Source\gamestate.cpp(45,48): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\frostfox\wkspaces\PIONG\assignment\Source\main.cpp(194,50): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+  raylib_template.vcxproj -> C:\Users\frostfox\wkspaces\PIONG\assignment\Build\Debug\raylib_template.exe
