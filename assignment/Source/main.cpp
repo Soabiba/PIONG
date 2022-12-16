@@ -148,7 +148,7 @@ int main(void)
                 {
                     lives = 3;
                     score = 0;
-                    losertext = "YOU LOSE!! HAHAHAHA"
+                    losertext = "YOU LOSE!! HAHAHAHA";
                     restart = "PRESS SPACE TO PLAY AGAIN";
                     screen = ENDING;
                 }
