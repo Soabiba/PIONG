@@ -28,6 +28,7 @@ public:
     Vector2 size{};
     int score;
 
+    
     Rectangle GetRectangle()
     {
         return Rectangle{ position.x, position.y , size.x, size.y };
