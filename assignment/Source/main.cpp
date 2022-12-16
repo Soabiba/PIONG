@@ -130,14 +130,14 @@ int main(void)
                     }
                 }
 
-                if (!shouldGameContinue)
+                /*if (!shouldGameContinue)
                 {
                     lives = 3;
                     score = 0;
-                    losertext = "YOU WIN!!!!";
+                    losertext = "YOU WIN!!!";
                     restart = "PRESS SPACE TO PLAY AGAIN";
                     screen = ENDING;
-                }
+                }*/
             }
             if (ball.y >= screenHeight)
             {
@@ -148,7 +148,16 @@ int main(void)
                 {
                     lives = 3;
                     score = 0;
-                    losertext = "YOU LOSE!! HAHAHAHA";
+                    losertext = "YOU LOSE!!!";
+                    restart = "PRESS SPACE TO PLAY AGAIN";
+                    screen = ENDING;
+                }
+
+                 if (score == 35)
+                {
+                    lives = 3;
+                    score = 0;
+                    losertext = "YOU WIN!!!";
                     restart = "PRESS SPACE TO PLAY AGAIN";
                     screen = ENDING;
                 }
